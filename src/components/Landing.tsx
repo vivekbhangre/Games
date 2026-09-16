@@ -26,7 +26,8 @@ export default function Landing({ onCreate, onJoin, error }: LandingProps) {
       </div>
       <div className="w-full max-w-md bg-white dark:bg-stone-900 rounded-3xl p-8 shadow-2xl border border-stone-200 dark:border-stone-700 transition-colors">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-2 tracking-tight">Cousins<span className="text-amber-500">Card</span>Game</h1>
+          <img src="/logo.svg" alt="Four Trumps Logo" className="w-20 h-20 mx-auto mb-4 drop-shadow-md" />
+          <h1 className="text-4xl font-bold mb-2 tracking-tight">Four<span className="text-amber-500">Trumps</span></h1>
           <p className="text-stone-500 dark:text-stone-400">Play cards with friends & family</p>
         </div>
 

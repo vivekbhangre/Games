@@ -1,6 +1,6 @@
 {
-  "name": "",
-  "description": "",
+  "name": "Four Trumps",
+  "description": "A multiplayer trick-taking card game played over four rounds with rotating trump suits.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
