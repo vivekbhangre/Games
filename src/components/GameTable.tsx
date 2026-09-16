@@ -110,7 +110,11 @@ export default function GameTable({ gameState, socketId, onPlayCard, onPause, on
                   <span className="flex items-center gap-2">
                     {p.avatar} {p.name}
                   </span>
-                  <span className="font-bold">{(gameState.scores[p.id] || 0) + (gameState.roundPoints?.[p.id] || 0)}</span>
+                  <span className="font-bold">
+                    {gameState.status === 'playing' 
+                      ? (gameState.scores[p.id] || 0) + (gameState.roundPoints?.[p.id] || 0) 
+                      : (gameState.scores[p.id] || 0)}
+                  </span>
                 </div>
               ))}
             </div>
@@ -214,7 +218,7 @@ export default function GameTable({ gameState, socketId, onPlayCard, onPause, on
                   <div className="mt-4 text-center">
                     <div className="text-sm font-semibold text-stone-900 dark:text-stone-200 max-w-[80px] truncate">{opponent.name}</div>
                     <div className="text-xs text-stone-500 dark:text-stone-400 mt-1">Tricks: <span className="text-stone-900 dark:text-white">{tricks}</span></div>
-                    <div className="text-xs text-stone-500">Score: {(gameState.scores[opponent.id] || 0) + (gameState.roundPoints?.[opponent.id] || 0)}</div>
+                    <div className="text-xs text-stone-500">Score: {gameState.status === 'playing' ? (gameState.scores[opponent.id] || 0) + (gameState.roundPoints?.[opponent.id] || 0) : (gameState.scores[opponent.id] || 0)}</div>
                   </div>
                   
                   {/* Opponent's hidden cards */}
@@ -406,7 +410,9 @@ export default function GameTable({ gameState, socketId, onPlayCard, onPause, on
 
             <div className="absolute bottom-4 right-4 pointer-events-auto bg-white/90 dark:bg-stone-950/90 backdrop-blur border border-stone-200 dark:border-white/10 rounded-xl px-4 py-2 shadow-lg">
                 <div className="text-xs text-stone-500 dark:text-stone-400 font-medium text-right">Score</div>
-                <div className="text-xl font-bold leading-none text-stone-900 dark:text-white text-right">{(gameState.scores[socketId] || 0) + (gameState.roundPoints?.[socketId] || 0)}</div>
+                <div className="text-xl font-bold leading-none text-stone-900 dark:text-white text-right">
+                  {gameState.status === 'playing' ? (gameState.scores[socketId] || 0) + (gameState.roundPoints?.[socketId] || 0) : (gameState.scores[socketId] || 0)}
+                </div>
             </div>
           </>
         )}

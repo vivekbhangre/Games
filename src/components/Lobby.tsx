@@ -45,32 +45,13 @@ export default function Lobby({ gameState, socketId, onReady, onStart, onSetTrum
         <div className="bg-stone-50 dark:bg-stone-950 rounded-2xl p-4 mb-8 border border-stone-200 dark:border-stone-700/50">
           <div className="flex items-center justify-between mb-4 px-2">
             <h3 className="font-semibold text-stone-800 dark:text-stone-300 flex items-center gap-2">
-              <Crown className="w-4 h-4" /> Trump Suit
+              <Crown className="w-4 h-4" /> Game Rules
             </h3>
           </div>
           
-          <div className="grid grid-cols-4 gap-2">
-            {['♠', '♥', '♦', '♣'].map((suit) => (
-              <button
-                key={suit}
-                onClick={() => isHost && onSetTrumpSuit(suit)}
-                disabled={!isHost}
-                className={cn(
-                  "py-3 text-2xl rounded-xl transition-all duration-200 border-2",
-                  gameState.trumpSuit === suit 
-                    ? "bg-amber-100 dark:bg-amber-500/20 border-amber-500 scale-105" 
-                    : "bg-white dark:bg-stone-900 border-transparent hover:bg-stone-200 dark:hover:bg-stone-700",
-                  !isHost && "cursor-default opacity-80",
-                  (suit === '♥' || suit === '♦') ? "text-red-500" : "text-stone-900 dark:text-stone-100"
-                )}
-              >
-                {suit}
-              </button>
-            ))}
+          <div className="bg-white dark:bg-stone-900 rounded-xl p-4 text-sm text-stone-600 dark:text-stone-400">
+            <p>The game consists of exactly 4 rounds. The Trump suit will automatically rotate each round (♠ Spades, ♥ Hearts, ♦ Diamonds, ♣ Clubs). Win tricks containing trump cards to score points!</p>
           </div>
-          {!isHost && (
-            <p className="text-center text-xs text-stone-500 mt-3">Only the host can change the trump suit</p>
-          )}
         </div>
 
         <div className="bg-stone-50 dark:bg-stone-950 rounded-2xl p-4 mb-8 border border-stone-200 dark:border-stone-700/50">

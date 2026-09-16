@@ -401,18 +401,22 @@ export function setupGameHandlers(io: Server) {
             }
             room.scoreHistory.push(roundScores);
             
-            // For now, game ends after 1 round. Let's make it more if needed, but 1 is fine for a demo
-            room.status = 'finished';
-            
-            let maxScore = -1;
-            let winner = null;
-            for (const [pId, score] of Object.entries(room.scores)) {
-              if (score > maxScore) {
-                maxScore = score;
-                winner = pId;
+            if (room.roundNumber >= 4) {
+              room.status = 'finished';
+              
+              let maxScore = -1;
+              let winner = null;
+              for (const [pId, score] of Object.entries(room.scores)) {
+                if (score > maxScore) {
+                  maxScore = score;
+                  winner = pId;
+                }
               }
+              room.winner = winner;
+            } else {
+              // Automatically start the next round
+              startNewRound(room);
             }
-            room.winner = winner;
           }
           broadcastState(room.roomId);
         }, 2000); // 2 second delay to see who won
@@ -517,11 +521,9 @@ function startNewRound(room: InternalRoom) {
     });
   }
   
-  // Trump should be retained from lobby selection, or defaults to what was selected
-  if (!room.trumpSuit) {
-    const suits: Suit[] = ['♠', '♥', '♦', '♣'];
-    room.trumpSuit = suits[Math.floor(Math.random() * suits.length)];
-  }
+  // Trump rotates each round (Spades, Hearts, Diamonds, Clubs)
+  const roundSuits: Suit[] = ['♠', '♥', '♦', '♣'];
+  room.trumpSuit = roundSuits[(room.roundNumber - 1) % 4];
   
   // Host starts first
   room.currentTurn = room.hostId;

@@ -52,8 +52,8 @@ export default function Scoreboard({ gameState, onClose }: ScoreboardProps) {
               <tbody className="divide-y divide-stone-100 dark:divide-stone-700/50">
                 {gameState.scoreHistory && gameState.scoreHistory.map((roundScores, idx) => (
                   <tr key={idx} className="hover:bg-stone-50 dark:hover:bg-stone-700/30 transition-colors">
-                    <td className="py-3 px-4 text-stone-600 dark:text-stone-400 font-medium">
-                      Round {idx + 1}
+                    <td className="py-3 px-4 text-stone-600 dark:text-stone-400 font-medium whitespace-nowrap">
+                      Round {idx + 1} ({['♠', '♥', '♦', '♣'][idx]})
                     </td>
                     {gameState.players.map(player => (
                       <td key={player.id} className="text-center py-3 px-4 font-mono text-stone-900 dark:text-stone-200">
@@ -66,8 +66,8 @@ export default function Scoreboard({ gameState, onClose }: ScoreboardProps) {
                 {/* Live Round Points */}
                 {gameState.status === 'playing' && (
                   <tr className="bg-stone-50/50 dark:bg-stone-800/30 text-stone-500 dark:text-stone-400 italic">
-                    <td className="py-3 px-4 font-medium text-sm">
-                      Current (Live)
+                    <td className="py-3 px-4 font-medium text-sm whitespace-nowrap">
+                      Current ({gameState.trumpSuit})
                     </td>
                     {gameState.players.map(player => {
                       const livePoints = gameState.roundPoints?.[player.id] || 0;
