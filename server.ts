@@ -4,6 +4,7 @@ import { createServer as createViteServer } from "vite";
 import { createServer as createHttpServer } from "http";
 import { Server } from "socket.io";
 import { setupGameHandlers } from "./src/server/game.js";
+import os from "os";
 
 async function startServer() {
   const app = express();
@@ -41,7 +42,30 @@ async function startServer() {
   }
 
   httpServer.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://0.0.0.0:${PORT}`);
+    console.log(`\n========================================`);
+    console.log(`  🚀 Server is up and running!`);
+    console.log(`========================================`);
+    console.log(`  Local:   http://localhost:${PORT}`);
+    
+    // Attempt to print the local network IP
+    try {
+      const networkInterfaces = os.networkInterfaces();
+      for (const interfaceName in networkInterfaces) {
+        const interfaces = networkInterfaces[interfaceName];
+        if (interfaces) {
+          for (const iface of interfaces) {
+            // Skip internal and non-IPv4 addresses
+            if (!iface.internal && iface.family === 'IPv4') {
+              console.log(`  Network: http://${iface.address}:${PORT}`);
+            }
+          }
+        }
+      }
+    } catch (e) {
+      // Ignore errors if os module fails for some reason
+    }
+    
+    console.log(`========================================\n`);
   });
 }
 
