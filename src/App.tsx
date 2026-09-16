@@ -44,10 +44,10 @@ export default function App() {
     });
   };
 
-  const handleJoinGame = (roomId: string, name: string, avatar: Avatar) => {
+  const handleJoinGame = (roomId: string, name: string, avatar: Avatar, isSpectator = false) => {
     setMyName(name);
     setMyAvatar(avatar);
-    socket.emit('joinRoom', { roomId, name, avatar }, (res: any) => {
+    socket.emit('joinRoom', { roomId, name, avatar, isSpectator }, (res: any) => {
       if (!res.success) setError(res.error);
     });
   };

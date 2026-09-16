@@ -28,6 +28,7 @@ export type GameStatus = 'lobby' | 'playing' | 'paused' | 'finished';
 export interface RoomState {
   roomId: string;
   players: Player[];
+  spectators?: Player[];
   hostId: string;
   status: GameStatus;
   

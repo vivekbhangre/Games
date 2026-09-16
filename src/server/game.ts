@@ -51,7 +51,7 @@ export function setupGameHandlers(io: Server) {
       });
     };
 
-    // Broadcast state to all players in the room
+    // Broadcast state to all players and spectators in the room
     const broadcastState = (roomId: string) => {
       const room = rooms.get(roomId);
       if (!room) return;
@@ -59,6 +59,14 @@ export function setupGameHandlers(io: Server) {
       for (const player of room.players) {
         if (player.connected) {
           sendStateToSocket(roomId, player.id);
+        }
+      }
+      
+      if (room.spectators) {
+        for (const spectator of room.spectators) {
+          if (spectator.connected) {
+            sendStateToSocket(roomId, spectator.id);
+          }
         }
       }
     };
@@ -74,6 +82,7 @@ export function setupGameHandlers(io: Server) {
       const newRoom: InternalRoom = {
         roomId,
         players: [player],
+        spectators: [],
         hostId: socket.id,
         status: 'lobby',
         trumpSuit: '♠',
@@ -98,7 +107,7 @@ export function setupGameHandlers(io: Server) {
       if (callback) callback({ success: true, roomId });
     });
 
-    socket.on("joinRoom", (data: { roomId: string; name: string; avatar: any }, callback: (res: any) => void) => {
+    socket.on("joinRoom", (data: { roomId: string; name: string; avatar: any; isSpectator?: boolean }, callback: (res: any) => void) => {
       const roomId = data.roomId.toUpperCase();
       const room = rooms.get(roomId);
       
@@ -107,6 +116,21 @@ export function setupGameHandlers(io: Server) {
         return;
       }
       
+      // Clean up previous room if any
+      const oldRoomId = playerToRoom.get(socket.id);
+      if (oldRoomId) handleDisconnect(socket.id, io);
+
+      if (data.isSpectator) {
+        if (!room.spectators) room.spectators = [];
+        const spectator: Player = { id: socket.id, name: data.name, avatar: data.avatar, isReady: true, connected: true };
+        room.spectators.push(spectator);
+        playerToRoom.set(socket.id, roomId);
+        socket.join(roomId);
+        broadcastState(roomId);
+        if (callback) callback({ success: true, roomId });
+        return;
+      }
+
       if (room.status !== 'lobby') {
         // Try to find a disconnected player with the same name to reconnect
         const disconnectedPlayer = room.players.find(p => p.name === data.name && !p.connected);
@@ -154,10 +178,6 @@ export function setupGameHandlers(io: Server) {
         if (callback) callback({ success: false, error: "Room is full" });
         return;
       }
-
-      // Clean up previous room if any
-      const oldRoomId = playerToRoom.get(socket.id);
-      if (oldRoomId) handleDisconnect(socket.id, io);
 
       const player: Player = { id: socket.id, name: data.name, avatar: data.avatar, isReady: false, connected: true };
       room.players.push(player);
@@ -362,7 +382,15 @@ export function setupGameHandlers(io: Server) {
     if (!room) return;
     
     const playerIndex = room.players.findIndex(p => p.id === socketId);
-    if (playerIndex !== -1) {
+    const spectatorIndex = room.spectators?.findIndex(p => p.id === socketId) ?? -1;
+
+    if (spectatorIndex !== -1 && room.spectators) {
+      room.spectators.splice(spectatorIndex, 1);
+      // Ensure we broadcast this change to the room
+      if (rooms.has(roomId)) {
+         // use broadcast logic if needed, but here we can just rely on the same notification loop below
+      }
+    } else if (playerIndex !== -1) {
       if (room.status === 'lobby') {
         room.players.splice(playerIndex, 1);
         if (room.players.length === 0) {
@@ -397,6 +425,17 @@ export function setupGameHandlers(io: Server) {
               ...publicState,
               hand: hands[player.id] || []
             });
+          }
+        }
+        if (remainingRoom.spectators) {
+          for (const spectator of remainingRoom.spectators) {
+            if (spectator.connected) {
+              const { hands, deck, ...publicState } = remainingRoom;
+              io.to(spectator.id).emit("gameState", {
+                ...publicState,
+                hand: []
+              });
+            }
           }
         }
       }

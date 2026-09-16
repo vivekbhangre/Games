@@ -3,8 +3,9 @@ import { ClientGameState, Card, Suit } from '../types';
 import CardView from './CardView';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
-import { LogOut, Pause, Play, RotateCcw, Trophy, Menu, ListOrdered } from 'lucide-react';
+import { LogOut, Pause, Play, RotateCcw, Trophy, Menu, ListOrdered, BookOpen } from 'lucide-react';
 import Scoreboard from './Scoreboard';
+import RulesModal from './RulesModal';
 
 interface GameTableProps {
   gameState: ClientGameState;
@@ -17,8 +18,13 @@ interface GameTableProps {
 export default function GameTable({ gameState, socketId, onPlayCard, onPause, onReset }: GameTableProps) {
   const [showMenu, setShowMenu] = useState(false);
   const [showScoreboard, setShowScoreboard] = useState(false);
+  const [showRules, setShowRules] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [lastTrickWinner, setLastTrickWinner] = useState<string | null>(null);
+
+  const me = gameState.players.find(p => p.id === socketId);
+  const isSpectator = !me && gameState.spectators?.some(s => s.id === socketId);
+  const isHost = gameState.hostId === socketId;
   
   useEffect(() => {
     if (gameState.trickWinner) {
@@ -33,12 +39,11 @@ export default function GameTable({ gameState, socketId, onPlayCard, onPause, on
     }
   }, [toast]);
 
-  const me = gameState.players.find(p => p.id === socketId);
   const isMyTurn = gameState.currentTurn === socketId;
-  const isHost = gameState.hostId === socketId;
 
   // Derive opponents
   const opponents = useMemo(() => {
+    if (isSpectator) return gameState.players; // For spectators, everyone is an opponent (shown on table)
     const myIndex = gameState.players.findIndex(p => p.id === socketId);
     if (myIndex === -1) return gameState.players;
     // Order opponents starting from the player after me
@@ -142,6 +147,9 @@ export default function GameTable({ gameState, socketId, onPlayCard, onPause, on
         </div>
 
         <div className="flex items-center gap-2">
+          <button onClick={() => setShowRules(true)} className="p-2 bg-white dark:bg-stone-800 hover:bg-stone-100 dark:hover:bg-stone-700 rounded-lg transition border border-stone-200 dark:border-white/10 shadow-sm text-stone-700 dark:text-stone-300">
+            <BookOpen className="w-5 h-5" />
+          </button>
           <button onClick={() => setShowScoreboard(true)} className="p-2 bg-white dark:bg-stone-800 hover:bg-stone-100 dark:hover:bg-stone-700 rounded-lg transition border border-stone-200 dark:border-white/10 shadow-sm text-stone-700 dark:text-stone-300">
             <ListOrdered className="w-5 h-5" />
           </button>
@@ -298,7 +306,7 @@ export default function GameTable({ gameState, socketId, onPlayCard, onPause, on
         {/* Turn Status Message */}
         <div className="mb-4 sm:mb-6 h-8 flex items-center justify-center">
           <AnimatePresence mode="wait">
-            {isMyTurn ? (
+            {!isSpectator && isMyTurn ? (
               <motion.div 
                 key="my-turn"
                 initial={{ opacity: 0, y: 10 }}
@@ -330,34 +338,36 @@ export default function GameTable({ gameState, socketId, onPlayCard, onPause, on
         </div>
 
         {/* My Hand */}
-        <div className="flex justify-center pointer-events-auto w-full max-w-5xl mx-auto pl-6 sm:pl-8 md:pl-12">
-          <AnimatePresence>
-            {gameState.hand.map((card, i) => {
-              const playable = canPlay(card);
-              // It's illegal if it's my turn, we are playing, and I can't play it
-              const isIllegal = isMyTurn && gameState.status === 'playing' && !playable;
-              
-              return (
-                <motion.div
-                  key={card.id}
-                  layoutId={card.id}
-                  initial={{ y: -400, scale: 0, opacity: 0 }}
-                  animate={{ y: 0, scale: 1, opacity: 1 }}
-                  exit={{ y: -100, opacity: 0, scale: 0.5 }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 25, delay: i * 0.05 }}
-                >
-                  <CardView 
-                    card={card} 
-                    playable={playable}
-                    isIllegal={isIllegal}
-                    overlap 
-                    onClick={() => handleCardClick(card)}
-                  />
-                </motion.div>
-              );
-            })}
-          </AnimatePresence>
-        </div>
+        {!isSpectator && (
+          <div className="flex justify-center pointer-events-auto w-full max-w-5xl mx-auto pl-6 sm:pl-8 md:pl-12">
+            <AnimatePresence>
+              {gameState.hand.map((card, i) => {
+                const playable = canPlay(card);
+                // It's illegal if it's my turn, we are playing, and I can't play it
+                const isIllegal = isMyTurn && gameState.status === 'playing' && !playable;
+                
+                return (
+                  <motion.div
+                    key={card.id}
+                    layoutId={card.id}
+                    initial={{ y: -400, scale: 0, opacity: 0 }}
+                    animate={{ y: 0, scale: 1, opacity: 1 }}
+                    exit={{ y: -100, opacity: 0, scale: 0.5 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 25, delay: i * 0.05 }}
+                  >
+                    <CardView 
+                      card={card} 
+                      playable={playable}
+                      isIllegal={isIllegal}
+                      overlap 
+                      onClick={() => handleCardClick(card)}
+                    />
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
+          </div>
+        )}
 
         {/* Toast */}
         <AnimatePresence>
@@ -373,23 +383,35 @@ export default function GameTable({ gameState, socketId, onPlayCard, onPause, on
           )}
         </AnimatePresence>
 
-        {/* My Stats */}
-        <div className="absolute bottom-4 left-4 flex gap-3 pointer-events-auto">
-          <div className="bg-white/90 dark:bg-stone-900/90 backdrop-blur border border-stone-200 dark:border-white/10 rounded-xl p-2 flex items-center gap-3 shadow-lg">
-             <div className="w-10 h-10 bg-stone-100 dark:bg-stone-800 rounded-lg flex items-center justify-center text-xl">
-               {me?.avatar}
-             </div>
-             <div className="pr-2">
-                <div className="text-xs text-stone-500 dark:text-stone-400 font-medium">Tricks</div>
-                <div className="text-lg font-bold leading-none text-stone-900 dark:text-white">{gameState.tricksWon[socketId] || 0}</div>
-             </div>
-          </div>
-        </div>
+        {/* My Stats (Hidden for spectator) */}
+        {!isSpectator && (
+          <>
+            <div className="absolute bottom-4 left-4 flex gap-3 pointer-events-auto">
+              <div className="bg-white/90 dark:bg-stone-900/90 backdrop-blur border border-stone-200 dark:border-white/10 rounded-xl p-2 flex items-center gap-3 shadow-lg">
+                <div className="w-10 h-10 bg-stone-100 dark:bg-stone-800 rounded-lg flex items-center justify-center text-xl">
+                  {me?.avatar}
+                </div>
+                <div className="pr-2">
+                    <div className="text-xs text-stone-500 dark:text-stone-400 font-medium">Tricks</div>
+                    <div className="text-lg font-bold leading-none text-stone-900 dark:text-white">{gameState.tricksWon[socketId] || 0}</div>
+                </div>
+              </div>
+            </div>
 
-        <div className="absolute bottom-4 right-4 pointer-events-auto bg-white/90 dark:bg-stone-900/90 backdrop-blur border border-stone-200 dark:border-white/10 rounded-xl px-4 py-2 shadow-lg">
-            <div className="text-xs text-stone-500 dark:text-stone-400 font-medium text-right">Score</div>
-            <div className="text-xl font-bold leading-none text-stone-900 dark:text-white text-right">{gameState.scores[socketId] || 0}</div>
-        </div>
+            <div className="absolute bottom-4 right-4 pointer-events-auto bg-white/90 dark:bg-stone-900/90 backdrop-blur border border-stone-200 dark:border-white/10 rounded-xl px-4 py-2 shadow-lg">
+                <div className="text-xs text-stone-500 dark:text-stone-400 font-medium text-right">Score</div>
+                <div className="text-xl font-bold leading-none text-stone-900 dark:text-white text-right">{gameState.scores[socketId] || 0}</div>
+            </div>
+          </>
+        )}
+        
+        {isSpectator && (
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-3 pointer-events-auto">
+            <div className="bg-blue-500/90 backdrop-blur text-white px-6 py-2 rounded-full font-medium shadow-xl">
+              SPECTATOR MODE
+            </div>
+          </div>
+        )}
 
       </div>
 
@@ -411,10 +433,13 @@ export default function GameTable({ gameState, socketId, onPlayCard, onPause, on
         </div>
       )}
 
-      {/* Scoreboard Modal */}
+      {/* Modals */}
       <AnimatePresence>
         {showScoreboard && (
           <Scoreboard gameState={gameState} onClose={() => setShowScoreboard(false)} />
+        )}
+        {showRules && (
+          <RulesModal onClose={() => setShowRules(false)} />
         )}
       </AnimatePresence>
 
