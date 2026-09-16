@@ -51,6 +51,7 @@ export interface RoomState {
   currentTrick: PlayedCard[];
   trickWinner: string | null;
   tricksWon: Record<string, number>;
+  roundPoints: Record<string, number>; // Points from trump cards won in current round
   scores: Record<string, number>;
   scoreHistory: Array<Record<string, number>>; // Tracks scores per round
   roundNumber: number;

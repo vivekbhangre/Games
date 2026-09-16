@@ -92,6 +92,7 @@ export function setupGameHandlers(io: Server) {
         currentTrick: [],
         trickWinner: null,
         tricksWon: {},
+        roundPoints: {},
         scores: {},
         scoreHistory: [],
         roundNumber: 0,
@@ -154,6 +155,10 @@ export function setupGameHandlers(io: Server) {
           if (room.tricksWon[oldId] !== undefined) {
             room.tricksWon[socket.id] = room.tricksWon[oldId];
             delete room.tricksWon[oldId];
+          }
+          if (room.roundPoints[oldId] !== undefined) {
+            room.roundPoints[socket.id] = room.roundPoints[oldId];
+            delete room.roundPoints[oldId];
           }
           if (room.currentTurn === oldId) room.currentTurn = socket.id;
           if (room.hostId === oldId) room.hostId = socket.id;
@@ -336,6 +341,7 @@ export function setupGameHandlers(io: Server) {
        room.scores = {};
        room.scoreHistory = [];
        room.tricksWon = {};
+       room.roundPoints = {};
        broadcastState(roomId);
     });
 
@@ -365,6 +371,14 @@ export function setupGameHandlers(io: Server) {
         room.trickWinner = winnerId;
         room.tricksWon[winnerId] = (room.tricksWon[winnerId] || 0) + 1;
         
+        let trickPoints = 0;
+        for (const played of room.currentTrick) {
+          if (played.card.suit === room.trumpSuit) {
+            trickPoints += played.card.value;
+          }
+        }
+        room.roundPoints[winnerId] = (room.roundPoints[winnerId] || 0) + trickPoints;
+        
         broadcastState(room.roomId);
         
         // Wait a bit before clearing trick
@@ -381,8 +395,7 @@ export function setupGameHandlers(io: Server) {
           if (!anyCardsLeft) {
             // End round
             const roundScores: Record<string, number> = {};
-            for (const [pId, tricks] of Object.entries(room.tricksWon)) {
-              const points = tricks * 10;
+            for (const [pId, points] of Object.entries(room.roundPoints)) {
               roundScores[pId] = points;
               room.scores[pId] = (room.scores[pId] || 0) + points;
             }
@@ -484,6 +497,7 @@ function startNewRound(room: InternalRoom) {
   room.roundNumber += 1;
   room.status = 'playing';
   room.tricksWon = {};
+  room.roundPoints = {};
   room.currentTrick = [];
   room.trickWinner = null;
   room.leadSuit = null;

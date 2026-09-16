@@ -70,10 +70,10 @@ export default function Scoreboard({ gameState, onClose }: ScoreboardProps) {
                       Current (Live)
                     </td>
                     {gameState.players.map(player => {
-                      const tricks = gameState.tricksWon?.[player.id] || 0;
+                      const livePoints = gameState.roundPoints?.[player.id] || 0;
                       return (
                         <td key={player.id} className="text-center py-3 px-4 font-mono">
-                          +{tricks * 10}
+                          +{livePoints}
                         </td>
                       );
                     })}
@@ -85,7 +85,7 @@ export default function Scoreboard({ gameState, onClose }: ScoreboardProps) {
                     Total
                   </td>
                   {gameState.players.map(player => {
-                    const currentLivePoints = gameState.status === 'playing' ? (gameState.tricksWon?.[player.id] || 0) * 10 : 0;
+                    const currentLivePoints = gameState.status === 'playing' ? (gameState.roundPoints?.[player.id] || 0) : 0;
                     const totalPoints = (gameState.scores?.[player.id] || 0) + currentLivePoints;
                     
                     return (
