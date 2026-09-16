@@ -21,6 +21,34 @@ export default function App() {
   const [myAvatar, setMyAvatar] = useState<Avatar>('🐼');
 
   useEffect(() => {
+    const onConnect = () => {
+      const savedSessionStr = sessionStorage.getItem('cousinsGameSession');
+      if (savedSessionStr) {
+        try {
+          const session = JSON.parse(savedSessionStr);
+          if (session.roomId && session.name) {
+            socket.emit('joinRoom', session, (res: any) => {
+              if (!res.success) {
+                sessionStorage.removeItem('cousinsGameSession');
+                setGameState(null);
+                setError(res.error || 'Failed to rejoin game.');
+              } else {
+                setMyName(session.name);
+                setMyAvatar(session.avatar);
+              }
+            });
+          }
+        } catch (e) {
+          sessionStorage.removeItem('cousinsGameSession');
+        }
+      }
+    };
+
+    socket.on('connect', onConnect);
+    if (socket.connected) {
+      onConnect();
+    }
+
     socket.on('gameState', (state: ClientGameState) => {
       setGameState(state);
       setError(null);
@@ -31,6 +59,7 @@ export default function App() {
     });
 
     return () => {
+      socket.off('connect', onConnect);
       socket.off('gameState');
       socket.off('connect_error');
     };
@@ -40,7 +69,11 @@ export default function App() {
     setMyName(name);
     setMyAvatar(avatar);
     socket.emit('createRoom', { name, avatar }, (res: any) => {
-      if (!res.success) setError(res.error);
+      if (!res.success) {
+        setError(res.error);
+      } else {
+        sessionStorage.setItem('cousinsGameSession', JSON.stringify({ roomId: res.roomId, name, avatar, isSpectator: false }));
+      }
     });
   };
 
@@ -48,7 +81,11 @@ export default function App() {
     setMyName(name);
     setMyAvatar(avatar);
     socket.emit('joinRoom', { roomId, name, avatar, isSpectator }, (res: any) => {
-      if (!res.success) setError(res.error);
+      if (!res.success) {
+        setError(res.error);
+      } else {
+        sessionStorage.setItem('cousinsGameSession', JSON.stringify({ roomId: res.roomId || roomId, name, avatar, isSpectator }));
+      }
     });
   };
 
@@ -76,41 +113,38 @@ export default function App() {
     socket.emit('resetGame');
   };
 
+  const handleSendMessage = (text: string) => {
+    socket.emit('sendMessage', { text });
+  };
+
   if (!gameState) {
     return (
-      <>
-        <ThemeToggle />
-        <Landing onCreate={handleCreateGame} onJoin={handleJoinGame} error={error} />
-      </>
+      <Landing onCreate={handleCreateGame} onJoin={handleJoinGame} error={error} />
     );
   }
 
   if (gameState.status === 'lobby') {
     return (
-      <>
-        <ThemeToggle />
-        <Lobby 
-          gameState={gameState} 
-          socketId={socket.id || ''} 
-          onReady={handleToggleReady} 
-          onStart={handleStartGame} 
-          onSetTrumpSuit={handleSetTrumpSuit}
-        />
-      </>
+      <Lobby 
+        gameState={gameState} 
+        socketId={socket.id || ''} 
+        onReady={handleToggleReady} 
+        onStart={handleStartGame} 
+        onSetTrumpSuit={handleSetTrumpSuit}
+        onSendMessage={handleSendMessage}
+      />
     );
   }
 
   return (
-    <>
-      <ThemeToggle />
-      <GameTable 
-        gameState={gameState} 
-        socketId={socket.id || ''} 
-        onPlayCard={handlePlayCard}
-        onPause={handlePause}
-        onReset={handleReset}
-      />
-    </>
+    <GameTable 
+      gameState={gameState} 
+      socketId={socket.id || ''} 
+      onPlayCard={handlePlayCard}
+      onPause={handlePause}
+      onReset={handleReset}
+      onSendMessage={handleSendMessage}
+    />
   );
 }
 

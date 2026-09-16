@@ -85,6 +85,7 @@ export function setupGameHandlers(io: Server) {
         spectators: [],
         hostId: socket.id,
         status: 'lobby',
+        chatHistory: [],
         trumpSuit: '♠',
         leadSuit: null,
         currentTurn: null,
@@ -186,6 +187,40 @@ export function setupGameHandlers(io: Server) {
       
       broadcastState(roomId);
       if (callback) callback({ success: true, roomId });
+    });
+
+    socket.on("sendMessage", (data: { text: string }) => {
+      const roomId = playerToRoom.get(socket.id);
+      if (!roomId) return;
+      const room = rooms.get(roomId);
+      if (!room) return;
+
+      let senderName = "Unknown";
+      const player = room.players.find(p => p.id === socket.id);
+      const spectator = room.spectators?.find(p => p.id === socket.id);
+      
+      if (player) senderName = player.name;
+      else if (spectator) senderName = spectator.name;
+
+      const chatMsg = {
+        id: Math.random().toString(36).substring(2, 10),
+        senderId: socket.id,
+        senderName,
+        text: data.text,
+        timestamp: Date.now(),
+      };
+
+      if (!room.chatHistory) {
+        room.chatHistory = [];
+      }
+
+      room.chatHistory.push(chatMsg);
+      // Keep only last 50 messages to prevent memory leak
+      if (room.chatHistory.length > 50) {
+        room.chatHistory.shift();
+      }
+
+      broadcastState(roomId);
     });
 
     socket.on("toggleReady", () => {

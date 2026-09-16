@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Avatar } from '../types';
 import { cn } from '../lib/utils';
 import { Users, Play } from 'lucide-react';
+import ThemeToggle from './ThemeToggle';
 
 const AVATARS: Avatar[] = ['🐼', '🐱', '🦊', '🐻', '🐰', '🐶', '🐵', '🤖'];
 
@@ -19,8 +20,11 @@ export default function Landing({ onCreate, onJoin, error }: LandingProps) {
   const [isSpectator, setIsSpectator] = useState(false);
 
   return (
-    <div className="min-h-screen bg-stone-50 dark:bg-stone-900 text-stone-900 dark:text-stone-100 flex flex-col items-center justify-center p-4 font-sans transition-colors">
-      <div className="w-full max-w-md bg-white dark:bg-stone-800 rounded-3xl p-8 shadow-2xl border border-stone-200 dark:border-stone-700 transition-colors">
+    <div className="min-h-screen bg-stone-50 dark:bg-stone-950 text-stone-900 dark:text-stone-100 flex flex-col items-center justify-center p-4 font-sans transition-colors relative">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
+      <div className="w-full max-w-md bg-white dark:bg-stone-900 rounded-3xl p-8 shadow-2xl border border-stone-200 dark:border-stone-700 transition-colors">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-2 tracking-tight">Cousins<span className="text-amber-500">Card</span>Game</h1>
           <p className="text-stone-500 dark:text-stone-400">Play cards with friends & family</p>
@@ -43,7 +47,7 @@ export default function Landing({ onCreate, onJoin, error }: LandingProps) {
             </button>
             <button
               onClick={() => setMode('join')}
-              className="w-full bg-stone-200 hover:bg-stone-300 dark:bg-stone-700 dark:hover:bg-stone-600 text-stone-900 dark:text-white font-semibold py-4 rounded-xl transition flex items-center justify-center gap-2"
+              className="w-full bg-stone-200 hover:bg-stone-300 dark:bg-stone-800 dark:hover:bg-stone-600 text-stone-900 dark:text-white font-semibold py-4 rounded-xl transition flex items-center justify-center gap-2"
             >
               <Users className="w-5 h-5" />
               Join Existing Room
@@ -59,7 +63,7 @@ export default function Landing({ onCreate, onJoin, error }: LandingProps) {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded-xl px-4 py-3 text-stone-900 dark:text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition"
+                className="w-full bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-700 rounded-xl px-4 py-3 text-stone-900 dark:text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition"
                 placeholder="Enter your name"
                 maxLength={12}
               />
@@ -74,7 +78,7 @@ export default function Landing({ onCreate, onJoin, error }: LandingProps) {
                     onClick={() => setAvatar(a)}
                     className={cn(
                       "text-3xl p-2 rounded-xl transition-all duration-200",
-                      avatar === a ? "bg-amber-100 dark:bg-amber-500/20 border-2 border-amber-500 scale-105" : "bg-stone-50 dark:bg-stone-900 border-2 border-transparent hover:bg-stone-200 dark:hover:bg-stone-700"
+                      avatar === a ? "bg-amber-100 dark:bg-amber-500/20 border-2 border-amber-500 scale-105" : "bg-stone-50 dark:bg-stone-950 border-2 border-transparent hover:bg-stone-200 dark:hover:bg-stone-700"
                     )}
                   >
                     {a}
@@ -91,7 +95,7 @@ export default function Landing({ onCreate, onJoin, error }: LandingProps) {
                     type="text"
                     value={roomId}
                     onChange={(e) => setRoomId(e.target.value.toUpperCase())}
-                    className="w-full bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded-xl px-4 py-3 text-stone-900 dark:text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition text-center text-xl tracking-widest font-mono"
+                    className="w-full bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-700 rounded-xl px-4 py-3 text-stone-900 dark:text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition text-center text-xl tracking-widest font-mono"
                     placeholder="ABC123"
                     maxLength={6}
                   />
@@ -111,7 +115,7 @@ export default function Landing({ onCreate, onJoin, error }: LandingProps) {
             <div className="pt-4 flex gap-3">
               <button
                 onClick={() => setMode('select')}
-                className="flex-1 bg-stone-200 hover:bg-stone-300 dark:bg-stone-700 dark:hover:bg-stone-600 text-stone-900 dark:text-white font-semibold py-3 rounded-xl transition"
+                className="flex-1 bg-stone-200 hover:bg-stone-300 dark:bg-stone-800 dark:hover:bg-stone-600 text-stone-900 dark:text-white font-semibold py-3 rounded-xl transition"
               >
                 Back
               </button>

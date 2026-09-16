@@ -6,6 +6,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import { LogOut, Pause, Play, RotateCcw, Trophy, Menu, ListOrdered, BookOpen } from 'lucide-react';
 import Scoreboard from './Scoreboard';
 import RulesModal from './RulesModal';
+import ChatBox from './ChatBox';
+import ThemeToggle from './ThemeToggle';
 
 interface GameTableProps {
   gameState: ClientGameState;
@@ -13,9 +15,10 @@ interface GameTableProps {
   onPlayCard: (cardId: string) => void;
   onPause: () => void;
   onReset: () => void;
+  onSendMessage: (text: string) => void;
 }
 
-export default function GameTable({ gameState, socketId, onPlayCard, onPause, onReset }: GameTableProps) {
+export default function GameTable({ gameState, socketId, onPlayCard, onPause, onReset, onSendMessage }: GameTableProps) {
   const [showMenu, setShowMenu] = useState(false);
   const [showScoreboard, setShowScoreboard] = useState(false);
   const [showRules, setShowRules] = useState(false);
@@ -80,11 +83,11 @@ export default function GameTable({ gameState, socketId, onPlayCard, onPause, on
 
   if (gameState.status === 'finished') {
     return (
-      <div className="min-h-screen bg-stone-50 dark:bg-stone-900 text-stone-900 dark:text-stone-100 flex items-center justify-center p-4 transition-colors">
+      <div className="min-h-screen bg-stone-50 dark:bg-stone-950 text-stone-900 dark:text-stone-100 flex items-center justify-center p-4 transition-colors">
         <motion.div 
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="bg-white dark:bg-stone-800 p-8 rounded-3xl text-center max-w-sm w-full shadow-2xl border border-stone-200 dark:border-stone-700"
+          className="bg-white dark:bg-stone-900 p-8 rounded-3xl text-center max-w-sm w-full shadow-2xl border border-stone-200 dark:border-stone-700"
         >
           <Trophy className="w-20 h-20 text-amber-500 mx-auto mb-6" />
           <h2 className="text-4xl font-bold mb-2">Game Over!</h2>
@@ -99,7 +102,7 @@ export default function GameTable({ gameState, socketId, onPlayCard, onPause, on
             )}
           </div>
           
-          <div className="bg-stone-50 dark:bg-stone-900 rounded-xl p-4 mb-8 border border-stone-200 dark:border-transparent">
+          <div className="bg-stone-50 dark:bg-stone-950 rounded-xl p-4 mb-8 border border-stone-200 dark:border-transparent">
             <h3 className="text-sm text-stone-500 dark:text-stone-400 uppercase tracking-wider mb-3">Final Scores</h3>
             <div className="space-y-2">
               {gameState.players.map(p => (
@@ -130,12 +133,12 @@ export default function GameTable({ gameState, socketId, onPlayCard, onPause, on
   }
 
   return (
-    <div className="min-h-screen bg-stone-100 dark:bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] dark:from-green-900 dark:via-green-950 dark:to-stone-950 text-stone-900 dark:text-stone-100 flex flex-col font-sans overflow-hidden transition-colors">
+    <div className="min-h-screen bg-stone-100 dark:bg-stone-950 text-stone-900 dark:text-stone-100 flex flex-col font-sans overflow-hidden transition-colors">
       
       {/* Header / Info Bar */}
       <header className="px-4 py-3 flex justify-between items-center bg-white/50 dark:bg-black/30 backdrop-blur-md border-b border-stone-200 dark:border-white/5 z-20">
         <div className="flex items-center gap-4">
-          <div className="bg-white/80 dark:bg-stone-800/80 px-3 py-1.5 rounded-lg border border-stone-200 dark:border-white/10 flex items-center gap-2 shadow-sm">
+          <div className="bg-white/80 dark:bg-stone-900/80 px-3 py-1.5 rounded-lg border border-stone-200 dark:border-white/10 flex items-center gap-2 shadow-sm">
             <span className="text-xs text-stone-500 dark:text-stone-400 uppercase">Trump</span>
             <span className={cn("text-xl leading-none", (gameState.trumpSuit === '♥' || gameState.trumpSuit === '♦') ? 'text-red-500' : 'text-stone-800 dark:text-stone-200')}>
               {gameState.trumpSuit || '?'}
@@ -147,15 +150,16 @@ export default function GameTable({ gameState, socketId, onPlayCard, onPause, on
         </div>
 
         <div className="flex items-center gap-2">
-          <button onClick={() => setShowRules(true)} className="p-2 bg-white dark:bg-stone-800 hover:bg-stone-100 dark:hover:bg-stone-700 rounded-lg transition border border-stone-200 dark:border-white/10 shadow-sm text-stone-700 dark:text-stone-300">
+          <button onClick={() => setShowRules(true)} className="p-2 bg-white dark:bg-stone-900 hover:bg-stone-100 dark:hover:bg-stone-700 rounded-lg transition border border-stone-200 dark:border-white/10 shadow-sm text-stone-700 dark:text-stone-300">
             <BookOpen className="w-5 h-5" />
           </button>
-          <button onClick={() => setShowScoreboard(true)} className="p-2 bg-white dark:bg-stone-800 hover:bg-stone-100 dark:hover:bg-stone-700 rounded-lg transition border border-stone-200 dark:border-white/10 shadow-sm text-stone-700 dark:text-stone-300">
+          <button onClick={() => setShowScoreboard(true)} className="p-2 bg-white dark:bg-stone-900 hover:bg-stone-100 dark:hover:bg-stone-700 rounded-lg transition border border-stone-200 dark:border-white/10 shadow-sm text-stone-700 dark:text-stone-300">
             <ListOrdered className="w-5 h-5" />
           </button>
-          <button onClick={() => setShowMenu(!showMenu)} className="p-2 bg-white dark:bg-stone-800 hover:bg-stone-100 dark:hover:bg-stone-700 rounded-lg transition border border-stone-200 dark:border-white/10 shadow-sm">
+          <button onClick={() => setShowMenu(!showMenu)} className="p-2 bg-white dark:bg-stone-900 hover:bg-stone-100 dark:hover:bg-stone-700 rounded-lg transition border border-stone-200 dark:border-white/10 shadow-sm">
             <Menu className="w-5 h-5 text-stone-700 dark:text-stone-300" />
           </button>
+          <ThemeToggle />
         </div>
       </header>
 
@@ -166,7 +170,7 @@ export default function GameTable({ gameState, socketId, onPlayCard, onPause, on
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="absolute top-16 right-4 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl shadow-2xl p-2 z-50 min-w-48"
+            className="absolute top-16 right-4 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded-xl shadow-2xl p-2 z-50 min-w-48"
           >
             <button onClick={() => { onPause(); setShowMenu(false); }} className="w-full text-left px-4 py-3 hover:bg-stone-100 dark:hover:bg-stone-700 rounded-lg flex items-center gap-3 text-stone-800 dark:text-stone-200">
               {gameState.status === 'paused' ? <Play className="w-4 h-4" /> : <Pause className="w-4 h-4" />}
@@ -195,7 +199,7 @@ export default function GameTable({ gameState, socketId, onPlayCard, onPause, on
                 <div key={opponent.id} className="flex flex-col items-center">
                   <div className={cn(
                     "relative flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-2xl text-3xl sm:text-4xl shadow-xl transition-all duration-300",
-                    isActive ? "bg-amber-100 dark:bg-amber-500 shadow-amber-500/50 border border-amber-300 dark:border-transparent scale-110" : "bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700",
+                    isActive ? "bg-amber-100 dark:bg-amber-500 shadow-amber-500/50 border border-amber-300 dark:border-transparent scale-110" : "bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700",
                     !opponent.connected && "opacity-50 grayscale"
                   )}>
                     {opponent.avatar}
@@ -329,7 +333,7 @@ export default function GameTable({ gameState, socketId, onPlayCard, onPause, on
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="bg-white/80 dark:bg-stone-800/80 text-stone-700 dark:text-stone-300 font-medium px-6 py-2 rounded-full backdrop-blur border border-stone-200 dark:border-white/10 text-sm sm:text-base pointer-events-auto"
+                className="bg-white/80 dark:bg-stone-900/80 text-stone-700 dark:text-stone-300 font-medium px-6 py-2 rounded-full backdrop-blur border border-stone-200 dark:border-white/10 text-sm sm:text-base pointer-events-auto"
               >
                 Waiting for {gameState.players.find(p => p.id === gameState.currentTurn)?.name}...
               </motion.div>
@@ -339,8 +343,9 @@ export default function GameTable({ gameState, socketId, onPlayCard, onPause, on
 
         {/* My Hand */}
         {!isSpectator && (
-          <div className="flex justify-center pointer-events-auto w-full max-w-5xl mx-auto pl-6 sm:pl-8 md:pl-12">
-            <AnimatePresence>
+          <div className="w-full pointer-events-auto overflow-x-auto hide-scrollbar -mx-4 px-4 pt-4 pb-4">
+            <div className="flex justify-start sm:justify-center w-max min-w-full pl-6 sm:pl-8 md:pl-12 mx-auto">
+              <AnimatePresence>
               {gameState.hand.map((card, i) => {
                 const playable = canPlay(card);
                 // It's illegal if it's my turn, we are playing, and I can't play it
@@ -366,6 +371,7 @@ export default function GameTable({ gameState, socketId, onPlayCard, onPause, on
                 );
               })}
             </AnimatePresence>
+            </div>
           </div>
         )}
 
@@ -376,7 +382,7 @@ export default function GameTable({ gameState, socketId, onPlayCard, onPause, on
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
-              className="absolute bottom-32 bg-red-100 dark:bg-stone-900/90 text-red-700 dark:text-red-400 border border-red-300 dark:border-red-900 px-4 py-2 rounded-xl font-medium shadow-2xl backdrop-blur-sm pointer-events-none"
+              className="absolute bottom-32 bg-red-100 dark:bg-stone-950/90 text-red-700 dark:text-red-400 border border-red-300 dark:border-red-900 px-4 py-2 rounded-xl font-medium shadow-2xl backdrop-blur-sm pointer-events-none"
             >
               {toast}
             </motion.div>
@@ -387,8 +393,8 @@ export default function GameTable({ gameState, socketId, onPlayCard, onPause, on
         {!isSpectator && (
           <>
             <div className="absolute bottom-4 left-4 flex gap-3 pointer-events-auto">
-              <div className="bg-white/90 dark:bg-stone-900/90 backdrop-blur border border-stone-200 dark:border-white/10 rounded-xl p-2 flex items-center gap-3 shadow-lg">
-                <div className="w-10 h-10 bg-stone-100 dark:bg-stone-800 rounded-lg flex items-center justify-center text-xl">
+              <div className="bg-white/90 dark:bg-stone-950/90 backdrop-blur border border-stone-200 dark:border-white/10 rounded-xl p-2 flex items-center gap-3 shadow-lg">
+                <div className="w-10 h-10 bg-stone-100 dark:bg-stone-900 rounded-lg flex items-center justify-center text-xl">
                   {me?.avatar}
                 </div>
                 <div className="pr-2">
@@ -398,7 +404,7 @@ export default function GameTable({ gameState, socketId, onPlayCard, onPause, on
               </div>
             </div>
 
-            <div className="absolute bottom-4 right-4 pointer-events-auto bg-white/90 dark:bg-stone-900/90 backdrop-blur border border-stone-200 dark:border-white/10 rounded-xl px-4 py-2 shadow-lg">
+            <div className="absolute bottom-4 right-4 pointer-events-auto bg-white/90 dark:bg-stone-950/90 backdrop-blur border border-stone-200 dark:border-white/10 rounded-xl px-4 py-2 shadow-lg">
                 <div className="text-xs text-stone-500 dark:text-stone-400 font-medium text-right">Score</div>
                 <div className="text-xl font-bold leading-none text-stone-900 dark:text-white text-right">{gameState.scores[socketId] || 0}</div>
             </div>
@@ -418,7 +424,7 @@ export default function GameTable({ gameState, socketId, onPlayCard, onPause, on
       {/* Pause Overlay */}
       {gameState.status === 'paused' && (
         <div className="fixed inset-0 bg-stone-900/40 dark:bg-black/60 backdrop-blur-sm z-40 flex items-center justify-center">
-          <div className="bg-white dark:bg-stone-800 p-8 rounded-3xl text-center max-w-sm w-full border border-stone-200 dark:border-stone-700 shadow-2xl">
+          <div className="bg-white dark:bg-stone-900 p-8 rounded-3xl text-center max-w-sm w-full border border-stone-200 dark:border-stone-700 shadow-2xl">
             <Pause className="w-16 h-16 text-amber-500 mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-stone-900 dark:text-white mb-2">Game Paused</h2>
             <p className="text-stone-500 dark:text-stone-400 mb-8">Waiting for someone to resume...</p>
@@ -442,6 +448,13 @@ export default function GameTable({ gameState, socketId, onPlayCard, onPause, on
           <RulesModal onClose={() => setShowRules(false)} />
         )}
       </AnimatePresence>
+
+      <ChatBox 
+        chatHistory={gameState.chatHistory || []} 
+        socketId={socketId} 
+        onSendMessage={onSendMessage} 
+        className="bottom-[88px] sm:bottom-[88px]"
+      />
 
     </div>
   );

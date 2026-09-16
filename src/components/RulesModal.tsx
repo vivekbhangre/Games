@@ -12,16 +12,16 @@ export default function RulesModal({ onClose }: RulesModalProps) {
         initial={{ opacity: 0, scale: 0.95, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 10 }}
-        className="bg-white dark:bg-stone-800 rounded-3xl w-full max-w-2xl shadow-2xl border border-stone-200 dark:border-stone-700 overflow-hidden flex flex-col max-h-[85vh]"
+        className="bg-white dark:bg-stone-900 rounded-3xl w-full max-w-2xl shadow-2xl border border-stone-200 dark:border-stone-700 overflow-hidden flex flex-col max-h-[85vh]"
       >
-        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-stone-100 dark:border-stone-700/50 bg-stone-50 dark:bg-stone-800/80 shrink-0">
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-stone-100 dark:border-stone-700/50 bg-stone-50 dark:bg-stone-900/80 shrink-0">
           <h2 className="text-xl sm:text-2xl font-bold text-stone-900 dark:text-white flex items-center gap-2">
             <BookOpen className="w-6 h-6 text-amber-500" />
             How to Play
           </h2>
           <button 
             onClick={onClose}
-            className="p-2 bg-stone-200 dark:bg-stone-700 hover:bg-stone-300 dark:hover:bg-stone-600 rounded-full transition-colors text-stone-600 dark:text-stone-300"
+            className="p-2 bg-stone-200 dark:bg-stone-800 hover:bg-stone-300 dark:hover:bg-stone-600 rounded-full transition-colors text-stone-600 dark:text-stone-300"
           >
             <X className="w-5 h-5" />
           </button>
@@ -38,13 +38,13 @@ export default function RulesModal({ onClose }: RulesModalProps) {
             <h3 className="text-lg font-bold text-stone-900 dark:text-stone-100 mb-2">Card Values</h3>
             <p className="mb-2">Cards are ranked from lowest to highest as follows:</p>
             <div className="flex flex-wrap gap-2 font-mono text-sm">
-              <span className="px-2 py-1 bg-stone-100 dark:bg-stone-700 rounded">2</span>
-              <span className="px-2 py-1 bg-stone-100 dark:bg-stone-700 rounded">3</span>
-              <span className="px-2 py-1 bg-stone-100 dark:bg-stone-700 rounded">...</span>
-              <span className="px-2 py-1 bg-stone-100 dark:bg-stone-700 rounded">10</span>
-              <span className="px-2 py-1 bg-stone-100 dark:bg-stone-700 rounded">J</span>
-              <span className="px-2 py-1 bg-stone-100 dark:bg-stone-700 rounded">Q</span>
-              <span className="px-2 py-1 bg-stone-100 dark:bg-stone-700 rounded">K</span>
+              <span className="px-2 py-1 bg-stone-100 dark:bg-stone-800 rounded">2</span>
+              <span className="px-2 py-1 bg-stone-100 dark:bg-stone-800 rounded">3</span>
+              <span className="px-2 py-1 bg-stone-100 dark:bg-stone-800 rounded">...</span>
+              <span className="px-2 py-1 bg-stone-100 dark:bg-stone-800 rounded">10</span>
+              <span className="px-2 py-1 bg-stone-100 dark:bg-stone-800 rounded">J</span>
+              <span className="px-2 py-1 bg-stone-100 dark:bg-stone-800 rounded">Q</span>
+              <span className="px-2 py-1 bg-stone-100 dark:bg-stone-800 rounded">K</span>
               <span className="px-2 py-1 bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 font-bold rounded">A</span>
             </div>
           </section>

@@ -18,16 +18,16 @@ export default function Scoreboard({ gameState, onClose }: ScoreboardProps) {
         initial={{ opacity: 0, scale: 0.95, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 10 }}
-        className="bg-white dark:bg-stone-800 rounded-3xl w-full max-w-2xl shadow-2xl border border-stone-200 dark:border-stone-700 overflow-hidden flex flex-col max-h-[85vh]"
+        className="bg-white dark:bg-stone-900 rounded-3xl w-full max-w-2xl shadow-2xl border border-stone-200 dark:border-stone-700 overflow-hidden flex flex-col max-h-[85vh]"
       >
-        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-stone-100 dark:border-stone-700/50 bg-stone-50 dark:bg-stone-800/80">
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-stone-100 dark:border-stone-700/50 bg-stone-50 dark:bg-stone-900/80">
           <h2 className="text-xl sm:text-2xl font-bold text-stone-900 dark:text-white flex items-center gap-2">
             <Trophy className="w-6 h-6 text-amber-500" />
             Scoreboard
           </h2>
           <button 
             onClick={onClose}
-            className="p-2 bg-stone-200 dark:bg-stone-700 hover:bg-stone-300 dark:hover:bg-stone-600 rounded-full transition-colors text-stone-600 dark:text-stone-300"
+            className="p-2 bg-stone-200 dark:bg-stone-800 hover:bg-stone-300 dark:hover:bg-stone-600 rounded-full transition-colors text-stone-600 dark:text-stone-300"
           >
             <X className="w-5 h-5" />
           </button>

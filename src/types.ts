@@ -23,6 +23,14 @@ export interface PlayedCard {
   card: Card;
 }
 
+export interface ChatMessage {
+  id: string;
+  senderId: string;
+  senderName: string;
+  text: string;
+  timestamp: number;
+}
+
 export type GameStatus = 'lobby' | 'playing' | 'paused' | 'finished';
 
 export interface RoomState {
@@ -31,6 +39,10 @@ export interface RoomState {
   spectators?: Player[];
   hostId: string;
   status: GameStatus;
+  
+  // Chat
+  chatHistory: ChatMessage[];
+
   
   // Game state (only sent when playing)
   trumpSuit: Suit | null;
