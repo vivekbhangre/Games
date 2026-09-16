@@ -34,54 +34,70 @@ export default function Scoreboard({ gameState, onClose }: ScoreboardProps) {
         </div>
 
         <div className="p-4 sm:p-6 overflow-x-auto flex-1">
-          {!hasHistory ? (
-            <div className="text-center py-12 text-stone-500 dark:text-stone-400">
-              <Trophy className="w-12 h-12 mx-auto mb-3 opacity-20" />
-              <p>No rounds have been completed yet.</p>
-            </div>
-          ) : (
-            <div className="min-w-[400px]">
-              <table className="w-full border-collapse">
-                <thead>
-                  <tr>
-                    <th className="text-left py-3 px-4 font-semibold text-stone-500 dark:text-stone-400 uppercase tracking-wider text-xs border-b border-stone-200 dark:border-stone-700">Round</th>
-                    {gameState.players.map(player => (
-                      <th key={player.id} className="text-center py-3 px-4 font-semibold text-stone-900 dark:text-stone-200 border-b border-stone-200 dark:border-stone-700">
-                        <div className="flex flex-col items-center gap-1">
-                          <span className="text-xl">{player.avatar}</span>
-                          <span className="text-sm truncate max-w-[80px]">{player.name}</span>
-                        </div>
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-stone-100 dark:divide-stone-700/50">
-                  {gameState.scoreHistory.map((roundScores, idx) => (
-                    <tr key={idx} className="hover:bg-stone-50 dark:hover:bg-stone-700/30 transition-colors">
-                      <td className="py-3 px-4 text-stone-600 dark:text-stone-400 font-medium">
-                        Round {idx + 1}
-                      </td>
-                      {gameState.players.map(player => (
-                        <td key={player.id} className="text-center py-3 px-4 font-mono text-stone-900 dark:text-stone-200">
-                          {roundScores[player.id] !== undefined ? `+${roundScores[player.id]}` : '-'}
-                        </td>
-                      ))}
-                    </tr>
+          <div className="min-w-[400px]">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr>
+                  <th className="text-left py-3 px-4 font-semibold text-stone-500 dark:text-stone-400 uppercase tracking-wider text-xs border-b border-stone-200 dark:border-stone-700">Round</th>
+                  {gameState.players.map(player => (
+                    <th key={player.id} className="text-center py-3 px-4 font-semibold text-stone-900 dark:text-stone-200 border-b border-stone-200 dark:border-stone-700">
+                      <div className="flex flex-col items-center gap-1">
+                        <span className="text-xl">{player.avatar}</span>
+                        <span className="text-sm truncate max-w-[80px]">{player.name}</span>
+                      </div>
+                    </th>
                   ))}
-                  <tr className="bg-amber-50 dark:bg-amber-900/10 font-bold border-t-2 border-amber-200 dark:border-amber-700/30">
-                    <td className="py-4 px-4 text-amber-900 dark:text-amber-500 uppercase tracking-wider text-sm">
-                      Total
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-stone-100 dark:divide-stone-700/50">
+                {gameState.scoreHistory && gameState.scoreHistory.map((roundScores, idx) => (
+                  <tr key={idx} className="hover:bg-stone-50 dark:hover:bg-stone-700/30 transition-colors">
+                    <td className="py-3 px-4 text-stone-600 dark:text-stone-400 font-medium">
+                      Round {idx + 1}
                     </td>
                     {gameState.players.map(player => (
-                      <td key={player.id} className="text-center py-4 px-4 text-lg text-amber-900 dark:text-amber-400 font-mono">
-                        {gameState.scores[player.id] || 0}
+                      <td key={player.id} className="text-center py-3 px-4 font-mono text-stone-900 dark:text-stone-200">
+                        {roundScores[player.id] !== undefined ? `+${roundScores[player.id]}` : '-'}
                       </td>
                     ))}
                   </tr>
-                </tbody>
-              </table>
-            </div>
-          )}
+                ))}
+                
+                {/* Live Round Points */}
+                {gameState.status === 'playing' && (
+                  <tr className="bg-stone-50/50 dark:bg-stone-800/30 text-stone-500 dark:text-stone-400 italic">
+                    <td className="py-3 px-4 font-medium text-sm">
+                      Current (Live)
+                    </td>
+                    {gameState.players.map(player => {
+                      const tricks = gameState.tricksWon?.[player.id] || 0;
+                      return (
+                        <td key={player.id} className="text-center py-3 px-4 font-mono">
+                          +{tricks * 10}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                )}
+
+                <tr className="bg-amber-50 dark:bg-amber-900/10 font-bold border-t-2 border-amber-200 dark:border-amber-700/30">
+                  <td className="py-4 px-4 text-amber-900 dark:text-amber-500 uppercase tracking-wider text-sm">
+                    Total
+                  </td>
+                  {gameState.players.map(player => {
+                    const currentLivePoints = gameState.status === 'playing' ? (gameState.tricksWon?.[player.id] || 0) * 10 : 0;
+                    const totalPoints = (gameState.scores?.[player.id] || 0) + currentLivePoints;
+                    
+                    return (
+                      <td key={player.id} className="text-center py-4 px-4 text-lg text-amber-900 dark:text-amber-400 font-mono">
+                        {totalPoints}
+                      </td>
+                    );
+                  })}
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </motion.div>
     </div>
