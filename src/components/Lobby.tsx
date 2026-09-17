@@ -50,8 +50,8 @@ export default function Lobby({ gameState, socketId, onReady, onStart, onSetTrum
           </div>
           
           <div className="bg-white dark:bg-stone-900 rounded-xl p-4 text-sm text-stone-600 dark:text-stone-400">
-            <p className="mb-2">The game consists of exactly 4 rounds. The Trump suit will automatically rotate each round (♠ Spades, ♥ Hearts, ♦ Diamonds, ♣ Clubs). Win tricks containing trump cards to score points!</p>
-            <p className="font-medium text-stone-800 dark:text-stone-300">Trump points:</p>
+            <p className="mb-2">The game consists of exactly 4 rounds. The Trump suit will automatically rotate each round (♠ Spades, ♥ Hearts, ♦ Diamonds, ♣ Clubs). Win tricks to capture cards and score points!</p>
+            <p className="font-medium text-stone-800 dark:text-stone-300">Points (for all captured cards):</p>
             <ul className="list-disc pl-5 mt-1 opacity-80">
               <li>2-10: Face value</li>
               <li>J: 11, Q: 12, K: 13, A: 14</li>

@@ -342,6 +342,7 @@ export function setupGameHandlers(io: Server) {
        room.scoreHistory = [];
        room.tricksWon = {};
        room.roundPoints = {};
+       room.roundNumber = 0;
        broadcastState(roomId);
     });
 
@@ -373,9 +374,7 @@ export function setupGameHandlers(io: Server) {
         
         let trickPoints = 0;
         for (const played of room.currentTrick) {
-          if (played.card.suit === room.trumpSuit) {
-            trickPoints += played.card.value;
-          }
+          trickPoints += played.card.value;
         }
         room.roundPoints[winnerId] = (room.roundPoints[winnerId] || 0) + trickPoints;
         

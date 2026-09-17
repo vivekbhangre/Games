@@ -31,12 +31,12 @@ export default function RulesModal({ onClose }: RulesModalProps) {
           
           <section>
             <h3 className="text-lg font-bold text-stone-900 dark:text-stone-100 mb-2">Objective</h3>
-            <p>The game is played over <strong>4 rounds</strong>, with the Trump suit rotating each round (♠ Spades, ♥ Hearts, ♦ Diamonds, ♣ Clubs). The goal is to capture <strong>Trump cards</strong> by winning tricks. The player with the most accumulated trump points at the end of the 4 rounds wins the game.</p>
+            <p>The game is played over <strong>4 rounds</strong>, with the Trump suit rotating each round (♠ Spades, ♥ Hearts, ♦ Diamonds, ♣ Clubs). The goal is to capture cards by winning tricks. The player with the most accumulated points at the end of the 4 rounds wins the game.</p>
           </section>
 
           <section>
             <h3 className="text-lg font-bold text-stone-900 dark:text-stone-100 mb-2">Scoring & Card Values</h3>
-            <p className="mb-2">You only earn points for <strong>Trump cards</strong> that you capture in tricks. Regular suits are worth 0 points. Trump cards award points based on their rank:</p>
+            <p className="mb-2">You earn points for <strong>all cards</strong> that you capture in tricks (regardless of their suit). Cards award points based on their rank:</p>
             <ul className="list-disc pl-5 space-y-1 text-sm font-medium mb-3">
               <li><strong>Number Cards (2-10):</strong> Face Value (2 to 10 points)</li>
               <li><strong>Jack (J):</strong> 11 points</li>
