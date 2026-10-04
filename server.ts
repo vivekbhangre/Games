@@ -41,6 +41,26 @@ async function startServer() {
     });
   }
 
+  httpServer.on("error", (err: any) => {
+    if (err.code === "EADDRINUSE") {
+      console.error(`Port ${PORT} is already in use. Retrying in 1s...`);
+      setTimeout(() => {
+        httpServer.close();
+        httpServer.listen(PORT, "0.0.0.0");
+      }, 1000);
+    } else {
+      console.error("Server error:", err);
+    }
+  });
+
+  const cleanup = () => {
+    httpServer.close(() => {
+      process.exit(0);
+    });
+  };
+  process.on("SIGTERM", cleanup);
+  process.on("SIGINT", cleanup);
+
   httpServer.listen(PORT, "0.0.0.0", () => {
     console.log(`\n========================================`);
     console.log(`  🚀 Server is up and running!`);
@@ -69,4 +89,7 @@ async function startServer() {
   });
 }
 
-startServer();
+startServer().catch((err) => {
+  console.error("Failed to start server:", err);
+  process.exit(1);
+});
