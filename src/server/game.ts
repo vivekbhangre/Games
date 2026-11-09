@@ -45,8 +45,13 @@ export function setupGameHandlers(io: Server) {
       const room = rooms.get(roomId);
       if (!room) return;
       const { hands, deck, ...publicState } = room;
+      const cardCounts: Record<string, number> = {};
+      for (const p of room.players) {
+        cardCounts[p.id] = hands[p.id]?.length || 0;
+      }
       io.to(targetSocketId).emit("gameState", {
         ...publicState,
+        cardCounts,
         hand: hands[targetSocketId] || []
       });
     };

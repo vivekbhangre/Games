@@ -33,17 +33,17 @@ export default function Scoreboard({ gameState, onClose }: ScoreboardProps) {
           </button>
         </div>
 
-        <div className="p-4 sm:p-6 overflow-x-auto flex-1">
-          <div className="min-w-[400px]">
-            <table className="w-full border-collapse">
+        <div className="p-3 sm:p-6 overflow-x-auto flex-1 hide-scrollbar">
+          <div className="min-w-[320px] sm:min-w-[400px]">
+            <table className="w-full border-collapse text-xs sm:text-sm">
               <thead>
                 <tr>
-                  <th className="text-left py-3 px-4 font-semibold text-stone-500 dark:text-stone-400 uppercase tracking-wider text-xs border-b border-stone-200 dark:border-stone-700">Round</th>
+                  <th className="text-left py-2 sm:py-3 px-2 sm:px-4 font-semibold text-stone-500 dark:text-stone-400 uppercase tracking-wider text-[11px] sm:text-xs border-b border-stone-200 dark:border-stone-700">Round</th>
                   {gameState.players.map(player => (
-                    <th key={player.id} className="text-center py-3 px-4 font-semibold text-stone-900 dark:text-stone-200 border-b border-stone-200 dark:border-stone-700">
-                      <div className="flex flex-col items-center gap-1">
-                        <span className="text-xl">{player.avatar}</span>
-                        <span className="text-sm truncate max-w-[80px]">{player.name}</span>
+                    <th key={player.id} className="text-center py-2 sm:py-3 px-2 sm:px-4 font-semibold text-stone-900 dark:text-stone-200 border-b border-stone-200 dark:border-stone-700">
+                      <div className="flex flex-col items-center gap-0.5 sm:gap-1">
+                        <span className="text-lg sm:text-xl">{player.avatar}</span>
+                        <span className="text-xs truncate max-w-[60px] sm:max-w-[80px] font-medium">{player.name}</span>
                       </div>
                     </th>
                   ))}
@@ -52,11 +52,11 @@ export default function Scoreboard({ gameState, onClose }: ScoreboardProps) {
               <tbody className="divide-y divide-stone-100 dark:divide-stone-700/50">
                 {gameState.scoreHistory && gameState.scoreHistory.map((roundScores, idx) => (
                   <tr key={idx} className="hover:bg-stone-50 dark:hover:bg-stone-700/30 transition-colors">
-                    <td className="py-3 px-4 text-stone-600 dark:text-stone-400 font-medium whitespace-nowrap">
-                      Round {idx + 1} ({['♠', '♥', '♦', '♣'][idx]})
+                    <td className="py-2.5 sm:py-3 px-2 sm:px-4 text-stone-600 dark:text-stone-400 font-medium whitespace-nowrap">
+                      R{idx + 1} ({['♠', '♥', '♦', '♣'][idx]})
                     </td>
                     {gameState.players.map(player => (
-                      <td key={player.id} className="text-center py-3 px-4 font-mono text-stone-900 dark:text-stone-200">
+                      <td key={player.id} className="text-center py-2.5 sm:py-3 px-2 sm:px-4 font-mono font-semibold text-stone-900 dark:text-stone-200">
                         {roundScores[player.id] !== undefined ? `+${roundScores[player.id]}` : '-'}
                       </td>
                     ))}
@@ -66,13 +66,13 @@ export default function Scoreboard({ gameState, onClose }: ScoreboardProps) {
                 {/* Live Round Points */}
                 {gameState.status === 'playing' && (
                   <tr className="bg-stone-50/50 dark:bg-stone-800/30 text-stone-500 dark:text-stone-400 italic">
-                    <td className="py-3 px-4 font-medium text-sm whitespace-nowrap">
+                    <td className="py-2 sm:py-3 px-2 sm:px-4 font-medium whitespace-nowrap">
                       Current ({gameState.trumpSuit})
                     </td>
                     {gameState.players.map(player => {
                       const livePoints = gameState.roundPoints?.[player.id] || 0;
                       return (
-                        <td key={player.id} className="text-center py-3 px-4 font-mono">
+                        <td key={player.id} className="text-center py-2 sm:py-3 px-2 sm:px-4 font-mono">
                           +{livePoints}
                         </td>
                       );
@@ -81,7 +81,7 @@ export default function Scoreboard({ gameState, onClose }: ScoreboardProps) {
                 )}
 
                 <tr className="bg-amber-50 dark:bg-amber-900/10 font-bold border-t-2 border-amber-200 dark:border-amber-700/30">
-                  <td className="py-4 px-4 text-amber-900 dark:text-amber-500 uppercase tracking-wider text-sm">
+                  <td className="py-3 sm:py-4 px-2 sm:px-4 text-amber-900 dark:text-amber-500 uppercase tracking-wider text-xs sm:text-sm">
                     Total
                   </td>
                   {gameState.players.map(player => {
@@ -89,7 +89,7 @@ export default function Scoreboard({ gameState, onClose }: ScoreboardProps) {
                     const totalPoints = (gameState.scores?.[player.id] || 0) + currentLivePoints;
                     
                     return (
-                      <td key={player.id} className="text-center py-4 px-4 text-lg text-amber-900 dark:text-amber-400 font-mono">
+                      <td key={player.id} className="text-center py-3 sm:py-4 px-2 sm:px-4 text-base sm:text-lg text-amber-900 dark:text-amber-400 font-mono">
                         {totalPoints}
                       </td>
                     );

@@ -56,6 +56,7 @@ export interface RoomState {
   scoreHistory: Array<Record<string, number>>; // Tracks scores per round
   roundNumber: number;
   winner: string | null;
+  cardCounts?: Record<string, number>; // Socket ID -> number of cards in hand
   
   // Player specific state (hand is sent separately to each player)
   // hands are not in the public room state

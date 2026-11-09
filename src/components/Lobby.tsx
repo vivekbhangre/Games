@@ -22,11 +22,11 @@ export default function Lobby({ gameState, socketId, onReady, onStart, onSetTrum
   const isSpectator = !me && gameState.spectators?.some(s => s.id === socketId);
 
   return (
-    <div className="min-h-screen bg-stone-50 dark:bg-stone-950 text-stone-900 dark:text-stone-100 flex flex-col items-center justify-center p-4 font-sans transition-colors relative">
-      <div className="absolute top-4 right-4">
+    <div className="min-h-[100dvh] bg-stone-50 dark:bg-stone-950 text-stone-900 dark:text-stone-100 flex flex-col items-center justify-center p-3 sm:p-4 font-sans transition-colors relative py-6">
+      <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20">
         <ThemeToggle />
       </div>
-      <div className="w-full max-w-lg bg-white dark:bg-stone-900 rounded-3xl p-8 shadow-2xl border border-stone-200 dark:border-stone-700 transition-colors">
+      <div className="w-full max-w-lg bg-white dark:bg-stone-900 rounded-3xl p-4 sm:p-8 shadow-2xl border border-stone-200 dark:border-stone-700 transition-colors">
         
         {isSpectator && (
           <div className="mb-6 bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 px-4 py-3 rounded-xl border border-blue-200 dark:border-blue-800 text-center font-medium">

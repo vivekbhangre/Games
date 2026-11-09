@@ -20,11 +20,11 @@ export default function Landing({ onCreate, onJoin, error }: LandingProps) {
   const [isSpectator, setIsSpectator] = useState(false);
 
   return (
-    <div className="min-h-screen bg-stone-50 dark:bg-stone-950 text-stone-900 dark:text-stone-100 flex flex-col items-center justify-center p-4 font-sans transition-colors relative">
-      <div className="absolute top-4 right-4">
+    <div className="min-h-[100dvh] bg-stone-50 dark:bg-stone-950 text-stone-900 dark:text-stone-100 flex flex-col items-center justify-center p-3 sm:p-4 font-sans transition-colors relative py-6">
+      <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20">
         <ThemeToggle />
       </div>
-      <div className="w-full max-w-md bg-white dark:bg-stone-900 rounded-3xl p-8 shadow-2xl border border-stone-200 dark:border-stone-700 transition-colors">
+      <div className="w-full max-w-md bg-white dark:bg-stone-900 rounded-3xl p-5 sm:p-8 shadow-2xl border border-stone-200 dark:border-stone-700 transition-colors">
         <div className="text-center mb-8">
           <img src="/logo.svg" alt="Four Trumps Logo" className="w-20 h-20 mx-auto mb-4 drop-shadow-md" />
           <h1 className="text-4xl font-bold mb-2 tracking-tight">Four<span className="text-amber-500">Trumps</span></h1>

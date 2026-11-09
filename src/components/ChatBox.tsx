@@ -9,11 +9,33 @@ interface ChatBoxProps {
   socketId: string;
   onSendMessage: (text: string) => void;
   className?: string;
+  isOpen?: boolean;
+  onClose?: () => void;
+  onOpen?: () => void;
 }
 
-export default function ChatBox({ chatHistory, socketId, onSendMessage, className }: ChatBoxProps) {
+export default function ChatBox({ 
+  chatHistory, 
+  socketId, 
+  onSendMessage, 
+  className,
+  isOpen: externalIsOpen,
+  onClose: externalOnClose,
+  onOpen: externalOnOpen
+}: ChatBoxProps) {
   const [text, setText] = useState('');
-  const [isOpen, setIsOpen] = useState(false);
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
+  const isControlled = externalIsOpen !== undefined;
+  const isOpen = isControlled ? externalIsOpen : internalIsOpen;
+  const setIsOpen = (open: boolean) => {
+    if (isControlled) {
+      if (open) externalOnOpen?.();
+      else externalOnClose?.();
+    } else {
+      setInternalIsOpen(open);
+    }
+  };
+
   const [unread, setUnread] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const prevHistoryLength = useRef(chatHistory.length);
@@ -58,7 +80,7 @@ export default function ChatBox({ chatHistory, socketId, onSendMessage, classNam
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="mb-4 w-80 sm:w-96 h-96 bg-white dark:bg-stone-950 border border-stone-200 dark:border-stone-700 rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+            className="mb-2 w-[calc(100vw-32px)] sm:w-96 max-w-sm h-[65dvh] sm:h-96 bg-white dark:bg-stone-950 border border-stone-200 dark:border-stone-700 rounded-2xl shadow-2xl flex flex-col overflow-hidden"
           >
             <div className="bg-amber-500 text-white p-3 font-semibold flex items-center justify-between">
               <div className="flex items-center gap-2">
