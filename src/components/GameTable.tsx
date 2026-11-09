@@ -90,9 +90,10 @@ export default function GameTable({ gameState, socketId, onPlayCard, onPause, on
 
   const getHandOverlapClass = (handLength: number, index: number) => {
     if (index === 0) return "ml-0";
-    if (handLength > 9) return "-ml-5 sm:-ml-7 md:-ml-9";
-    if (handLength > 5) return "-ml-3 sm:-ml-5 md:-ml-7";
-    return "-ml-1 sm:-ml-3 md:-ml-4";
+    if (handLength >= 14) return "-ml-5 sm:-ml-6 md:-ml-8";
+    if (handLength >= 9) return "-ml-4 sm:-ml-6 md:-ml-7";
+    if (handLength >= 5) return "-ml-3 sm:-ml-4 md:-ml-5";
+    return "-ml-1 sm:-ml-2 md:-ml-3";
   };
 
   if (gameState.status === 'finished') {
