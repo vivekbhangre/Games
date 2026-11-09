@@ -57,6 +57,7 @@ export interface RoomState {
   roundNumber: number;
   winner: string | null;
   cardCounts?: Record<string, number>; // Socket ID -> number of cards in hand
+  discardedCardsCount?: number; // Cards discarded (e.g. 1/3 of deck when only 2 players play)
   
   // Player specific state (hand is sent separately to each player)
   // hands are not in the public room state

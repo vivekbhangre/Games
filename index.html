@@ -10,6 +10,51 @@
     <meta property="og:description" content="A multiplayer trick-taking card game played over four rounds with rotating trump suits." />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
+    <script>
+      (function() {
+        function isWsError(err) {
+          if (!err) return false;
+          var msg = (err && (err.message || String(err))) || '';
+          var stack = (err && err.stack) || '';
+          return msg.indexOf('WebSocket') !== -1 || 
+                 msg.indexOf('closed without opened') !== -1 || 
+                 msg.indexOf('vite:ws') !== -1 || 
+                 msg.indexOf('failed to connect to websocket') !== -1 ||
+                 stack.indexOf('@vite/client') !== -1;
+        }
+
+        window.addEventListener('unhandledrejection', function(event) {
+          if (isWsError(event.reason)) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+          }
+        }, true);
+
+        window.addEventListener('error', function(event) {
+          if (isWsError(event.error) || isWsError(event.message)) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+          }
+        }, true);
+
+        var origHandler = null;
+        try {
+          Object.defineProperty(window, 'onunhandledrejection', {
+            get: function() { return origHandler; },
+            set: function(fn) {
+              origHandler = function(e) {
+                if (isWsError(e && e.reason)) {
+                  if (e.preventDefault) e.preventDefault();
+                  return true;
+                }
+                if (typeof fn === 'function') return fn.call(this, e);
+              };
+            },
+            configurable: true
+          });
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

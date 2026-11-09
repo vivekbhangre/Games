@@ -102,6 +102,7 @@ export function setupGameHandlers(io: Server) {
         scoreHistory: [],
         roundNumber: 0,
         winner: null,
+        discardedCardsCount: 0,
         hands: {},
         deck: []
       };
@@ -348,6 +349,7 @@ export function setupGameHandlers(io: Server) {
        room.tricksWon = {};
        room.roundPoints = {};
        room.roundNumber = 0;
+       room.discardedCardsCount = 0;
        broadcastState(roomId);
     });
 
@@ -511,9 +513,13 @@ function startNewRound(room: InternalRoom) {
   room.leadSuit = null;
   room.winner = null;
   
-  // Deal cards evenly
+  // Deal cards:
+  // Rule: There must be at least 3 parts always. If fewer than 3 players (e.g. 2 players),
+  // shuffle cards into 3 equal parts (17 cards each), give 2 parts to the 2 players,
+  // and discard the 3rd part (+ remainder) so 2 players cannot guess what the other holds.
   const numPlayers = room.players.length;
-  const cardsPerPlayer = Math.floor(room.deck.length / numPlayers);
+  const effectiveParts = Math.max(3, numPlayers);
+  const cardsPerPlayer = Math.floor(room.deck.length / effectiveParts);
   
   for (let i = 0; i < numPlayers; i++) {
     const pId = room.players[i].id;
@@ -524,6 +530,9 @@ function startNewRound(room: InternalRoom) {
       return b.value - a.value; // highest to lowest
     });
   }
+
+  // Any remaining cards in the deck are discarded (hidden)
+  room.discardedCardsCount = room.deck.length;
   
   // Trump rotates each round (Spades, Hearts, Diamonds, Clubs)
   const roundSuits: Suit[] = ['♠', '♥', '♦', '♣'];

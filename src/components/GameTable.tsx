@@ -166,6 +166,14 @@ export default function GameTable({ gameState, socketId, onPlayCard, onPause, on
           <div className="text-xs sm:text-sm font-semibold text-stone-700 dark:text-stone-300">
             Round {gameState.roundNumber}/4
           </div>
+          {gameState.discardedCardsCount && gameState.discardedCardsCount > 0 ? (
+            <div 
+              className="hidden sm:flex items-center gap-1 bg-amber-100 dark:bg-amber-950/60 border border-amber-300/70 dark:border-amber-700/50 px-2 py-0.5 rounded-lg text-[10px] font-mono text-amber-800 dark:text-amber-300"
+              title="2-Player Rule: 1/3 of deck discarded face down"
+            >
+              <span>🂠 Discarded: {gameState.discardedCardsCount}</span>
+            </div>
+          ) : null}
         </div>
 
         <div className="flex items-center gap-1 sm:gap-1.5">
@@ -345,6 +353,11 @@ export default function GameTable({ gameState, socketId, onPlayCard, onPause, on
               <span className="text-[10px] text-stone-400/80 dark:text-stone-600 block mt-0.5">
                 {isMyTurn ? 'Your lead' : `${currentTurnPlayer?.name || 'Player'}'s turn`}
               </span>
+              {gameState.discardedCardsCount && gameState.discardedCardsCount > 0 ? (
+                <span className="text-[9px] text-amber-600 dark:text-amber-400 font-medium block mt-1">
+                  (2-Player: {gameState.discardedCardsCount} cards discarded)
+                </span>
+              ) : null}
             </div>
           )}
 

@@ -56,6 +56,9 @@ export default function Lobby({ gameState, socketId, onReady, onStart, onSetTrum
               <li>2-10: Face value</li>
               <li>J: 11, Q: 12, K: 13, A: 14</li>
             </ul>
+            <p className="mt-2.5 pt-2 border-t border-stone-200 dark:border-stone-800 text-xs text-stone-500 dark:text-stone-400">
+              <strong>3-Part Dealing Rule:</strong> If only 2 players play, cards are divided into 3 equal parts (17 cards each) and the 3rd part is discarded face down so players cannot guess what the other holds.
+            </p>
           </div>
         </div>
 

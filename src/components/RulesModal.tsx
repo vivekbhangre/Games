@@ -57,6 +57,17 @@ export default function RulesModal({ onClose }: RulesModalProps) {
             </div>
           </section>
 
+          <section className="bg-stone-50 dark:bg-stone-800/40 p-4 rounded-xl border border-stone-200 dark:border-stone-700/50">
+            <h3 className="text-lg font-bold text-stone-900 dark:text-stone-100 mb-2">Player Count & Dealing Rule</h3>
+            <p className="mb-2">There is always a <strong>3-part deal minimum</strong>. If only <strong>2 players</strong> are in the game:</p>
+            <ul className="list-disc pl-5 space-y-1 text-sm font-medium">
+              <li>The deck is shuffled and divided into <strong>3 equal parts</strong> (17 cards each).</li>
+              <li>Two parts are dealt to the two players (17 cards each).</li>
+              <li>The third part (18 cards) is <strong>discarded face down</strong> so players cannot guess what cards the other is holding.</li>
+            </ul>
+            <p className="mt-2 text-xs opacity-75">When 3 or more players play, cards are dealt evenly among all players.</p>
+          </section>
+
           <section>
             <h3 className="text-lg font-bold text-stone-900 dark:text-stone-100 mb-2">Playing a Trick</h3>
             <ul className="list-disc pl-5 space-y-2">
